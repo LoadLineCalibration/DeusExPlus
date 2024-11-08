@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.023,C:\LANG\DelphiProjects\DxLaunch\DXL_MainForm.pas=C:\LANG\DelphiProjects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.485,C:\LANG\DelphiProjects\DxLaunch\DXL_MainForm.pas=C:\LANG\DelphiProjects\DxLaunch\uFrmMain.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.932,C:\LANG\DelphiProjects\DxLaunch\Launchbag.dproj=C:\LANG\DelphiProjects\DxLaunch\DeusEx.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.360,C:\LANG\DelphiProjects\DxLaunch\DXLaunch.dproj=C:\LANG\DelphiProjects\DxLaunch\DeusEx.exe.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.724,C:\LANG\DelphiProjects\DxLaunch\DXL_SettingsForm.dfm=C:\LANG\DelphiProjects\DxLaunch\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.793,C:\LANG\DelphiProjects\DxLaunch\DeusEx.dproj=C:\LANG\DelphiProjects\DxLaunch\Launchbag.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.724,C:\LANG\DelphiProjects\DxLaunch\DXL_SettingsForm.pas=C:\LANG\DelphiProjects\DxLaunch\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.021,C:\LANG\DelphiProjects\DxLaunch\DXL_SettingsForm.pas=C:\LANG\DelphiProjects\DxLaunch\uFrmSettings.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.021,C:\LANG\DelphiProjects\DxLaunch\DXL_SettingsForm.dfm=C:\LANG\DelphiProjects\DxLaunch\uFrmSettings.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.023,C:\LANG\DelphiProjects\DxLaunch\DXL_MainForm.dfm=C:\LANG\DelphiProjects\Unit1.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.485,C:\LANG\DelphiProjects\DxLaunch\DXL_MainForm.dfm=C:\LANG\DelphiProjects\DxLaunch\uFrmMain.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.890,=C:\LANG\DelphiProjects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.138,=C:\LANG\DelphiProjects\DxLaunch\Launchbag.Classes.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.260,=C:\LANG\DelphiProjects\DxLaunch\Launchbag.Utils.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.151,=C:\LANG\DelphiProjects\DxLaunch\Launchbag.Consts.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.352,C:\LANG\DelphiProjects\DxLaunch\DXLaunch.dproj=C:\LANG\DelphiProjects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.319,=C:\LANG\DelphiProjects\DxLaunch\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.537,C:\LANG\DelphiProjects\DxLaunch\DeusEx.exe.dproj=C:\LANG\DelphiProjects\DxLaunch\DeusEx.dproj</Transaction>
+    <Transaction>2024.11.08 11:44:36.681,C:\LANG\DelphiProjects\DxLaunch\Launchbag.dproj=C:\LANG\DelphiProjects\DxLaunch\DeusEx.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
