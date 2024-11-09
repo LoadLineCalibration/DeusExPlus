@@ -132,6 +132,7 @@ object frmSettings: TfrmSettings
       Style = csOwnerDrawFixed
       TabOrder = 1
       OnChange = cmbRenderDeviceChange
+      OnDrawItem = cmbRenderDeviceDrawItem
     end
     object cmbGameUIScale: TComboBox
       Left = 156

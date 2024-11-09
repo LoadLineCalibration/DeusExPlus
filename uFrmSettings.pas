@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls, Vcl.StdCtrls,
-  System.Generics.Collections, System.Generics.Defaults, Launchbag.Consts, System.IniFiles, system.IOUtils, Vcl.Samples.Spin;
+  System.Generics.Collections, System.Generics.Defaults, Launchbag.Consts, System.IniFiles, system.IOUtils,
+  Vcl.Samples.Spin, Vcl.GraphUtil, System.Types;
 
 type
   TfrmSettings = class(TForm)
@@ -34,11 +35,14 @@ type
     procedure FillScreenResolutions();
     procedure SaveGameSettings();
     procedure LoadGameSettings();
+    procedure FindIntFiles(const Dir: string);
+    procedure ParseIntFile(const IntFileName: string);
 
     procedure FormCreate(Sender: TObject);
     procedure cmbScreenResChange(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure cmbRenderDeviceChange(Sender: TObject);
+    procedure cmbRenderDeviceDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; State: TOwnerDrawState);
 
   private
     { Private declarations }
@@ -131,7 +135,9 @@ procedure TfrmSettings.LoadGameSettings();
 begin
     var GameIniToCheck: string;
 
-    if (SameText(frmMain.AppExeName, 'DeusEx') = True) or (SameText(frmMain.AppExeName, 'Launchbag') = True) then
+    if (SameText(frmMain.AppExeName, 'DeusEx') = True) or
+       (SameText(frmMain.AppExeName, 'Launchbag') = True) or
+       (SameText(frmMain.AppExeName, 'DeusExPlus') = True)  then
         GameIniToCheck := 'DeusEx.ini'
     else
         GameIniToCheck := frmMain.AppExeName + '.ini';
@@ -142,11 +148,11 @@ begin
         Application.Terminate();
     end;
 
-
-
     var UserIniToCheck: string;
 
-    if (SameText(frmMain.AppExeName, 'DeusEx') = True) or (SameText(frmMain.AppExeName, 'Launchbag') = True) then
+    if (SameText(frmMain.AppExeName, 'DeusEx') = True) or
+       (SameText(frmMain.AppExeName, 'DeusExPlus ') = True) or
+       (SameText(frmMain.AppExeName, 'Launchbag') = True) then
         UserIniToCheck := 'User.ini'
     else
         UserIniToCheck := frmMain.AppExeName + USER_INI;
@@ -249,11 +255,98 @@ begin
     end;
 end;
 
+procedure TfrmSettings.FindIntFiles(const Dir: string);
+var
+    SearchRec: TSearchRec;
+begin
+    if FindFirst(IncludeTrailingPathDelimiter(Dir) + '*.int', faAnyFile, SearchRec) = 0 then
+    begin
+        repeat
+            ParseIntFile(IncludeTrailingPathDelimiter(Dir) + SearchRec.Name);
+        until FindNext(SearchRec) <> 0;
+
+        FindClose(SearchRec);
+    end;
+
+    if cmbRenderDevice.Items.Count = 0 then
+    begin
+        MessageBox(Handle, PChar(strNoRenDevs), PChar(strGameExeWarningTitle), MB_OK + MB_ICONWARNING + MB_TOPMOST);
+        Application.Terminate();
+    end;
+end;
+
+procedure TfrmSettings.ParseIntFile(const IntFileName: string);
+var
+    IntFileContent: TStringList;
+    Line: string;
+    ObjectName, ClassCaption: string;
+    I: Integer;
+    bSectionFound: Boolean;
+begin
+    IntFileContent := TStringList.Create;
+    try
+        IntFileContent.LoadFromFile(IntFileName);
+
+        // Сначала найдем Object и проверим MetaClass
+        for I := 0 to IntFileContent.Count - 1 do
+        begin
+            Line := Trim(IntFileContent[I]);
+
+            // Пропускаем комментарии и пустые строки
+            if (Line = '') or (Line.StartsWith('//')) or (Line.StartsWith(';')) then
+                Continue;
+
+            if Line.StartsWith('Object=(Name=') and Line.Contains('MetaClass=Engine.RenderDevice') then
+            begin
+                // Извлекаем Object Name
+                ObjectName := Copy(Line, Pos('Name=', Line) + 5, Pos(',', Line, Pos('Name=', Line)) - Pos('Name=', Line) - 5);
+                Break;
+            end;
+        end;
+
+        if ObjectName = '' then
+            Exit; // Если Object не найден, выходим
+
+        // Найдем секцию и ClassCaption
+        bSectionFound := False;
+        for I := 0 to IntFileContent.Count - 1 do
+        begin
+            Line := Trim(IntFileContent[I]);
+
+            if bSectionFound then
+            begin
+                if Line.StartsWith('[') then
+                    Break; // Конец секции
+
+                if Line.StartsWith('ClassCaption=') then
+                begin
+                    ClassCaption := Copy(Line, Pos('=', Line) + 1, MaxInt);
+                    Break;
+                end;
+            end
+            else if Line = '[' + Copy(ObjectName, Pos('.', ObjectName) + 1, MaxInt) + ']' then
+            begin
+                bSectionFound := True;
+            end;
+        end;
+
+        if ClassCaption <> '' then
+        begin
+            ClassCaption := StringReplace(ClassCaption, '"', '', [rfReplaceAll]);
+            cmbRenderDevice.Items.AddPair(ClassCaption, ObjectName);
+        end;
+
+    finally
+        IntFileContent.Free();
+    end;
+end;
+
 procedure TfrmSettings.FormCreate(Sender: TObject);
 begin
     grpCommandLineParams.Caption := Format(strGrpCommandLineTitle, [frmMain.Caption]);
     mmoCommandline.Text := frmMain.edtCommandline.Text;
 
+    FindIntFiles(ExtractFilePath(Application.ExeName));
     FillScreenResolutions();
     LoadGameSettings();
 end;
@@ -266,6 +359,30 @@ end;
 procedure TfrmSettings.cmbRenderDeviceChange(Sender: TObject);
 begin
 //
+end;
+
+procedure TfrmSettings.cmbRenderDeviceDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; State: TOwnerDrawState);
+begin
+    with (Control as TComboBox).Canvas do
+    begin
+        Font.Name := 'Verdana';
+        Font.Size := 10;
+
+        if (odSelected in State) then
+        begin
+            Font.Color := clHighlightText;
+            Brush.Style := bsClear;
+            Brush.Color := clHighlight;
+            FillRect(Rect);
+        end else
+        begin
+            Font.Color := clBtnText;
+            Brush.Style := bsSolid;
+            FillRect(Rect);
+        end;
+
+        DrawText(cmbRenderDevice.Canvas.Handle, cmbRenderDevice.Items.KeyNames[Index], -1, Rect, DT_EDITCONTROL or DT_WORDBREAK);
+    end;
 end;
 
 procedure TfrmSettings.cmbScreenResChange(Sender: TObject);
